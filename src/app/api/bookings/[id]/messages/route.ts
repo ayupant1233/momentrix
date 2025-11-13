@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -8,13 +8,7 @@ const messageSchema = z.object({
   body: z.string().min(1).max(2000),
 });
 
-type RouteParams = {
-  params: {
-    id: string;
-  };
-};
-
-export async function POST(request: Request, { params }: RouteParams) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {

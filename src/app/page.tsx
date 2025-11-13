@@ -310,14 +310,14 @@ export default function Home() {
                       className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-white transition hover:border-brand-300/60 hover:text-brand-100"
                     >
                       Call
-                    </a>
-                    <a
+          </a>
+          <a
                       href={`mailto:${photographer.email}`}
                       className="rounded-full border border-white/15 px-3 py-1 text-xs font-semibold text-white transition hover:border-brand-300/60 hover:text-brand-100"
-                    >
+          >
                       Email
-                    </a>
-                  </div>
+          </a>
+        </div>
                 </article>
               ))}
             </div>
