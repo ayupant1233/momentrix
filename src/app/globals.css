@@ -3,19 +3,58 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #02030a;
+  --foreground: #f8fafc;
+  --muted: #94a3b8;
+  --surface: rgba(15, 23, 42, 0.65);
+  }
+
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  min-height: 100%;
+  color: var(--foreground);
+  background: radial-gradient(circle at top, rgba(17, 152, 255, 0.18), transparent 55%),
+    radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.2), transparent 55%),
+    var(--background);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  position: relative;
+  isolation: isolate;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 10% 30%, rgba(148, 163, 184, 0.08), transparent 55%),
+    radial-gradient(circle at 90% 10%, rgba(125, 211, 252, 0.08), transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.glass {
+  @apply bg-slate-900/60 backdrop-blur-xl border border-white/10 shadow-soft-glow;
+}
+
+.chip {
+  @apply text-xs uppercase tracking-wide font-medium px-3 py-1.5 rounded-full border border-white/10 bg-white/5;
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-500/30;
+  }
 }
