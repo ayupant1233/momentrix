@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createPkcePair, generateRandomString, resolveDigilockerConfig } from "@/lib/digilocker";
 
 const COOKIE_NAME = "digilocker_oauth";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -43,7 +43,7 @@ export async function GET(request: Request) {
   if (!clientId) {
     const errorUrl = new URL("/settings/verification", origin);
     errorUrl.searchParams.set("error", "digilocker_config");
-    response.cookies.delete(COOKIE_NAME, { path: "/" });
+    response.cookies.delete(COOKIE_NAME);
     response.headers.set("Location", errorUrl.toString());
     return response;
   }

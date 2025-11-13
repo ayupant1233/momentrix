@@ -88,7 +88,7 @@ export default function PhotographerOnboardingPage() {
 
   const cityValue = watch("city");
 
-  useQuery({
+  const profileQuery = useQuery({
     queryKey: ["photographer-profile"],
     queryFn: async () => {
       const res = await fetch("/api/profile/photographer");
@@ -118,27 +118,29 @@ export default function PhotographerOnboardingPage() {
       }>;
     },
     enabled: status === "authenticated",
-    onSuccess: (data) => {
-      if (data.profile) {
-        reset({
-          headline: data.profile.headline ?? "",
-          bio: data.profile.bio ?? "",
-          city: data.profile.city ?? "",
-          latitude: data.profile.latitude?.toString() ?? "",
-          longitude: data.profile.longitude?.toString() ?? "",
-          travelRadiusKm: data.profile.travelRadiusKm?.toString() ?? "15",
-          hourlyRate: data.profile.hourlyRate?.toString() ?? "5000",
-          halfDayRate: data.profile.halfDayRate?.toString() ?? "15000",
-          fullDayRate: data.profile.fullDayRate?.toString() ?? "28000",
-          instagramHandle: data.profile.instagramHandle ?? "",
-          websiteUrl: data.profile.websiteUrl ?? "",
-          services: data.profile.services?.join(", ") ?? "",
-          tags: data.profile.tags?.join(", ") ?? "",
-          phone: data.profile.user?.phone ?? "",
-        });
-      }
-    },
   });
+
+  useEffect(() => {
+    const profile = profileQuery.data?.profile;
+    if (profile) {
+      reset({
+        headline: profile.headline ?? "",
+        bio: profile.bio ?? "",
+        city: profile.city ?? "",
+        latitude: profile.latitude?.toString() ?? "",
+        longitude: profile.longitude?.toString() ?? "",
+        travelRadiusKm: profile.travelRadiusKm?.toString() ?? "15",
+        hourlyRate: profile.hourlyRate?.toString() ?? "5000",
+        halfDayRate: profile.halfDayRate?.toString() ?? "15000",
+        fullDayRate: profile.fullDayRate?.toString() ?? "28000",
+        instagramHandle: profile.instagramHandle ?? "",
+        websiteUrl: profile.websiteUrl ?? "",
+        services: profile.services?.join(", ") ?? "",
+        tags: profile.tags?.join(", ") ?? "",
+        phone: profile.user?.phone ?? "",
+      });
+    }
+  }, [profileQuery.data, reset]);
 
   const mutation = useMutation({
     mutationFn: async (values: FormValues) => {

@@ -18,9 +18,7 @@ const registerSchema = z
       .regex(/[A-Z]/, "Include at least one uppercase character")
       .regex(/[0-9]/, "Include at least one number"),
     confirmPassword: z.string(),
-    role: z.enum(["CLIENT", "PHOTOGRAPHER"], {
-      required_error: "Select how you plan to use Momentrix",
-    }),
+    role: z.enum(["CLIENT", "PHOTOGRAPHER"]),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],

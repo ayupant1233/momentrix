@@ -58,7 +58,7 @@ export default function ClientOnboardingPage() {
 
   const cityValue = watch("city");
 
-  useQuery({
+  const profileQuery = useQuery({
     queryKey: ["client-profile"],
     queryFn: async () => {
       const res = await fetch("/api/profile/client");
@@ -76,20 +76,22 @@ export default function ClientOnboardingPage() {
       }>;
     },
     enabled: status === "authenticated",
-    onSuccess: (data) => {
-      if (data.profile) {
-        reset({
-          companyName: data.profile.companyName ?? "",
-          useCase: data.profile.useCase ?? "",
-          city: data.profile.city ?? "",
-          latitude: data.profile.latitude?.toString() ?? "",
-          longitude: data.profile.longitude?.toString() ?? "",
-          budgetMin: data.profile.budgetMin?.toString() ?? "",
-          budgetMax: data.profile.budgetMax?.toString() ?? "",
-        });
-      }
-    },
   });
+
+  useEffect(() => {
+    const profile = profileQuery.data?.profile;
+    if (profile) {
+      reset({
+        companyName: profile.companyName ?? "",
+        useCase: profile.useCase ?? "",
+        city: profile.city ?? "",
+        latitude: profile.latitude?.toString() ?? "",
+        longitude: profile.longitude?.toString() ?? "",
+        budgetMin: profile.budgetMin?.toString() ?? "",
+        budgetMax: profile.budgetMax?.toString() ?? "",
+      });
+    }
+  }, [profileQuery.data, reset]);
 
   const mutation = useMutation({
     mutationFn: async (values: FormValues) => {

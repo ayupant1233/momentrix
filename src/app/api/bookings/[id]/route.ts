@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -15,7 +15,8 @@ type RouteParams = {
   };
 };
 
-export async function GET(_: Request, { params }: RouteParams) {
+export async function GET(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -24,7 +25,7 @@ export async function GET(_: Request, { params }: RouteParams) {
 
   const booking = await prisma.booking.findFirst({
     where: {
-      id: params.id,
+      id,
       OR: [
         { clientId: session.user.id },
         { photographerId: session.user.id },
@@ -53,14 +54,15 @@ export async function GET(_: Request, { params }: RouteParams) {
   return NextResponse.json({ booking });
 }
 
-export async function PATCH(request: Request, { params }: RouteParams) {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const booking = await prisma.booking.findUnique({ where: { id: params.id } });
+  const booking = await prisma.booking.findUnique({ where: { id } });
 
   if (!booking) {
     return NextResponse.json({ message: "Booking not found" }, { status: 404 });
@@ -91,10 +93,31 @@ export async function PATCH(request: Request, { params }: RouteParams) {
   }
 
   const updated = await prisma.booking.update({
-    where: { id: params.id },
+    where: { id },
     data: { status: parsed.data.status },
   });
 
   return NextResponse.json({ booking: updated });
+}
+
+export async function DELETE(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params;
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id || session.user.role !== UserRole.CLIENT) {
+    return NextResponse.json({ message: "Only clients can cancel bookings" }, { status: 403 });
+  }
+
+  const booking = await prisma.booking.findUnique({
+    where: { id },
+  });
+
+  if (!booking) {
+    return NextResponse.json({ message: "Booking not found" }, { status: 404 });
+  }
+
+  await prisma.booking.delete({ where: { id } });
+
+  return NextResponse.json({ message: "Booking cancelled" });
 }
 

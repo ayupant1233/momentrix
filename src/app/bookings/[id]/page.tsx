@@ -19,12 +19,14 @@ export default async function BookingDetailPage({ params }: BookingPageProps) {
     redirect(`/login?callbackUrl=/bookings/${params.id}`);
   }
 
+  const currentUserId = session.user.id;
+
   const booking = await prisma.booking.findFirst({
     where: {
       id: params.id,
       OR: [
-        { clientId: session.user.id },
-        { photographerId: session.user.id },
+        { clientId: currentUserId },
+        { photographerId: currentUserId },
       ],
     },
     include: {
@@ -47,7 +49,7 @@ export default async function BookingDetailPage({ params }: BookingPageProps) {
     redirect("/bookings");
   }
 
-  const isClient = booking.clientId === session.user.id;
+  const isClient = booking.clientId === currentUserId;
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-6 py-16 text-slate-100">
@@ -83,8 +85,8 @@ export default async function BookingDetailPage({ params }: BookingPageProps) {
                 <div
                   key={message.id}
                   className={clsx("flex flex-col gap-1 rounded-2xl p-3 text-sm", {
-                    "self-end bg-brand-500/20 text-brand-100": message.sender.id === session.user.id,
-                    "self-start bg-white/5 text-slate-100": message.sender.id !== session.user.id,
+                    "self-end bg-brand-500/20 text-brand-100": message.sender.id === currentUserId,
+                    "self-start bg-white/5 text-slate-100": message.sender.id !== currentUserId,
                   })}
                 >
                   <p className="font-medium">{message.sender.name ?? "Unnamed"}</p>

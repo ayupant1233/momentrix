@@ -108,7 +108,11 @@ export default async function AppHome() {
                 <>
                   <MetricCard value={dashboardData.pendingBookings ?? 0} label="New booking requests" />
                   <MetricCard
-                    value={dashboardData.profile?.reviews.length ?? 0}
+                    value={
+                      dashboardData.profile && "reviews" in dashboardData.profile
+                        ? dashboardData.profile.reviews.length
+                        : 0
+                    }
                     label="Reviews this month"
                   />
                 </>
@@ -176,7 +180,10 @@ function PhotographerPanels({
 }: {
   dashboardData: Awaited<ReturnType<typeof getDashboardData>>;
 }) {
-  const profile = dashboardData.profile;
+  const profile =
+    dashboardData.profile && "portfolioItems" in dashboardData.profile
+      ? dashboardData.profile
+      : null;
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="rounded-4xl border border-white/10 bg-white/5 p-6">

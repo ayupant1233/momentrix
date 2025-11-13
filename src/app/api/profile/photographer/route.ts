@@ -69,7 +69,7 @@ export async function PUT(request: Request) {
 
     const data = parsed.data;
 
-    const tx = [
+    await prisma.$transaction([
       prisma.photographerProfile.update({
         where: { userId: session.user.id },
         data: {
@@ -89,20 +89,17 @@ export async function PUT(request: Request) {
           tags: data.tags,
         },
       }),
-    ];
-
-    if (data.phone !== undefined) {
-      tx.push(
-        prisma.user.update({
-          where: { id: session.user.id },
-          data: {
-            phone: data.phone,
-          },
-        }),
-      );
-    }
-
-    await prisma.$transaction(tx);
+      ...(data.phone !== undefined
+        ? [
+            prisma.user.update({
+              where: { id: session.user.id },
+              data: {
+                phone: data.phone,
+              },
+            }),
+          ]
+        : []),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {

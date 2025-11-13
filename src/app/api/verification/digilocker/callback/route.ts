@@ -4,7 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { resolveDigilockerConfig } from "@/lib/digilocker";
-import { VerificationStatus } from "@prisma/client";
+import { Prisma, VerificationStatus } from "@prisma/client";
 
 const COOKIE_NAME = "digilocker_oauth";
 
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     return NextResponse.redirect(loginUrl.toString());
   }
 
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const stored = parseOAuthCookie(cookieStore.get(COOKIE_NAME)?.value);
   const cleanupResponse = (redirectTarget: string) => {
     const response = NextResponse.redirect(redirectTarget);
@@ -159,8 +159,8 @@ export async function GET(request: Request) {
         userId: session.user.id,
         provider: "DIGILOCKER",
         status: VerificationStatus.APPROVED,
-        requestData: tokenResponse,
-        responseData: profile,
+        requestData: tokenResponse as Prisma.InputJsonValue,
+        responseData: profile as Prisma.InputJsonValue,
       },
     }),
     prisma.user.update({
