@@ -41,6 +41,12 @@ enum MediaType {
   AUDIO
 }
 
+enum SocialProvider {
+  INSTAGRAM
+  FACEBOOK
+  X
+}
+
 model User {
   id                 String                @id @default(cuid())
   email              String                @unique
@@ -67,6 +73,7 @@ model User {
   follows              PhotographerFollow[] @relation("ClientFollows")
   postLikes            PostLike[]
   emailTokens          EmailVerificationToken[]
+  socialAccounts       SocialAccount[]
 }
 
 model ClientProfile {
@@ -114,6 +121,27 @@ model PhotographerProfile {
   availability   AvailabilitySlot[]
   reviews        Review[]
   followers      PhotographerFollow[]
+}
+
+model SocialAccount {
+  id            String          @id @default(cuid())
+  userId        String
+  provider      SocialProvider
+  handle        String
+  displayName   String?
+  followerCount Int             @default(0)
+  profileUrl    String?
+  accessToken   String?
+  refreshToken  String?
+  expiresAt     DateTime?
+  verifiedAt    DateTime?
+  rawProfile    Json?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, provider])
 }
 
 model PortfolioItem {

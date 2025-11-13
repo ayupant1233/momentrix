@@ -1,6 +1,7 @@
 import { prisma } from "./prisma";
 import { hashPassword, verifyPassword } from "./password";
 import { sendEmailVerificationCode } from "./mail";
+import { recalculatePhotographerVerificationStatus } from "./verification-status";
 
 const TOKEN_EXPIRY_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -51,6 +52,7 @@ export async function verifyEmailCode(userId: string, code: string) {
           },
         }),
       ]);
+      await recalculatePhotographerVerificationStatus(userId);
       return true;
     }
   }

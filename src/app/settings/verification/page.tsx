@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import EmailVerificationCard from "./email-verification-card";
+import SocialVerificationCard from "./social-verification-card";
 
 export default async function VerificationSettingsPage() {
   const session = await getServerSession(authOptions);
@@ -18,6 +19,22 @@ export default async function VerificationSettingsPage() {
       email: true,
       emailVerifiedAt: true,
       role: true,
+      socialAccounts: {
+        select: {
+          provider: true,
+          handle: true,
+          displayName: true,
+          followerCount: true,
+          profileUrl: true,
+          verifiedAt: true,
+          updatedAt: true,
+        },
+      },
+      photographerProfile: {
+        select: {
+          verificationStatus: true,
+        },
+      },
     },
   });
 
@@ -51,13 +68,20 @@ export default async function VerificationSettingsPage() {
         verifiedAt={user.emailVerifiedAt?.toISOString() ?? null}
       />
 
-      <div className="space-y-4 rounded-3xl border border-dashed border-brand-400/50 bg-white/5 p-6 text-sm text-slate-300">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Social verification (coming soon)</h3>
-        <p>
-          Next, you’ll be able to connect Instagram, Facebook, or X accounts. Photographers with 200+ followers (50+ on X) earn the full Momentrix badge.
-        </p>
-        <p className="text-xs text-slate-500">We’ll notify you as soon as social linking is live.</p>
-      </div>
+      <SocialVerificationCard
+        accounts={user.socialAccounts.map((account) => ({
+          provider: account.provider,
+          handle: account.handle,
+          displayName: account.displayName,
+          followerCount: account.followerCount,
+          profileUrl: account.profileUrl,
+          verifiedAt: account.verifiedAt?.toISOString() ?? null,
+          updatedAt: account.updatedAt.toISOString(),
+        }))}
+        role={user.role}
+        emailVerified={Boolean(user.emailVerifiedAt)}
+        verificationStatus={user.photographerProfile?.verificationStatus ?? null}
+      />
     </div>
   );
 }

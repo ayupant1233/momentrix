@@ -97,7 +97,7 @@ export default async function AppHome() {
         </div>
       </header>
 
-      <main className="grid gap-8 lg:grid-cols-[2fr_1fr]">
+      <main className="grid gap-8 xl:grid-cols-[2fr_1fr]">
         <section className="space-y-6">
           <div className="rounded-4xl border border-white/10 bg-white/5 p-6">
             <h2 className="text-lg font-semibold text-white">
@@ -128,7 +128,7 @@ export default async function AppHome() {
           {isPhotographer ? (
             <PhotographerPanels dashboardData={dashboardData} />
           ) : (
-            <ClientPanels dashboardData={dashboardData} />
+            <ClientPanels dashboardData={dashboardData} userId={session.user.id} />
           )}
         </section>
 
@@ -224,11 +224,28 @@ function PhotographerPanels({
 
 function ClientPanels({
   dashboardData,
+  userId,
 }: {
   dashboardData: Awaited<ReturnType<typeof getDashboardData>>;
+  userId: string;
 }) {
+  const hasActiveRequest = (dashboardData.activeRequests ?? 0) > 0;
   return (
     <div className="space-y-6">
+      {hasActiveRequest ? null : (
+        <div className="rounded-4xl border border-brand-400/40 bg-brand-500/10 p-6">
+          <h3 className="text-lg font-semibold text-white">Share your brief</h3>
+          <p className="mt-3 text-sm text-slate-300">
+            Submit a project brief to unlock personalised photographer recommendations aligned with your needs.
+          </p>
+          <Link
+            href="/bookings/new"
+            className="mt-4 inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-sm font-semibold text-midnight-900"
+          >
+            Create a new brief
+          </Link>
+        </div>
+      )}
       <div className="rounded-4xl border border-white/10 bg-white/5 p-6">
         <h3 className="text-lg font-semibold text-white">Suggested photographers</h3>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -243,12 +260,13 @@ function ClientPanels({
             ))
           ) : (
             <EmptyState
-              message="Adjust your search filters to discover creators within your preferred radius."
-              link="/discover"
+              message="Complete a brief to get handpicked matches."
+              link="/bookings/new"
             />
           )}
         </div>
       </div>
+      <ClientFeed userId={userId} />
     </div>
   );
 }
@@ -260,6 +278,95 @@ function EmptyState({ message, link }: { message: string; link: string }) {
       <Link href={link} className="mt-2 inline-flex text-brand-200">
         Take action →
       </Link>
+    </div>
+  );
+}
+
+async function ClientFeed({ userId }: { userId: string }) {
+  const recommendations = await prisma.photographerProfile.findMany({
+    take: 6,
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      headline: true,
+      city: true,
+      travelRadiusKm: true,
+      tags: true,
+      portfolioItems: {
+        take: 1,
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          mediaUrl: true,
+          title: true,
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          email: true,
+        },
+      },
+    },
+  });
+
+  return (
+    <div className="rounded-4xl border border-white/10 bg-white/5 p-6">
+      <h3 className="text-lg font-semibold text-white">Near you</h3>
+      <p className="mt-2 text-sm text-slate-300">A feed of creators recently active in your region.</p>
+      <div className="mt-6 space-y-4">
+        {recommendations.length === 0 ? (
+          <EmptyState message="Update your location to surface nearby photographers." link="/onboarding/client" />
+        ) : (
+          recommendations.map((photographer) => {
+            const tags = Array.isArray(photographer.tags) ? (photographer.tags as string[]) : [];
+            const hero = photographer.portfolioItems.at(0);
+            return (
+              <article key={photographer.id} className="rounded-3xl border border-white/10 bg-white/5 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-white">
+                      {photographer.user?.name ?? photographer.headline ?? "Momentrix photographer"}
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {photographer.city ?? "Location TBD"} • travels {photographer.travelRadiusKm} km
+                    </p>
+                  </div>
+                  <Link
+                    href={`/photographers/${photographer.id}`}
+                    className="inline-flex items-center justify-center rounded-full border border-white/15 px-4 py-1 text-xs font-semibold text-white transition hover:border-brand-300/60 hover:text-brand-100"
+                  >
+                    View profile
+                  </Link>
+                </div>
+                {hero ? (
+                  <div className="mt-3 overflow-hidden rounded-3xl border border-white/10">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={hero.mediaUrl} alt={hero.title} className="h-48 w-full object-cover" />
+                  </div>
+                ) : null}
+                {tags.length ? (
+                  <div className="mt-3 flex flex-wrap gap-2 text-[11px] uppercase tracking-wide text-brand-200">
+                    {tags.slice(0, 6).map((tag) => (
+                      <span key={tag} className="rounded-full border border-brand-400/40 px-3 py-1">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </article>
+            );
+          })
+        )}
+      </div>
+      <div className="mt-6 flex items-center justify-between text-xs text-slate-400">
+        <span>Need a curated shortlist?</span>
+        <Link href="/bookings/new" className="text-brand-200">
+          Share a brief →
+        </Link>
+      </div>
     </div>
   );
 }

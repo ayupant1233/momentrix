@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import BookingForm from "./booking-form";
+import QuoteBuilder from "./quote-builder";
 
 export default async function NewBookingPage() {
   const session = await getServerSession(authOptions);
@@ -16,11 +17,14 @@ export default async function NewBookingPage() {
   });
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-4xl px-6 py-16 text-slate-100">
-      <BookingForm
-        defaultLatitude={clientProfile?.latitude ?? null}
-        defaultLongitude={clientProfile?.longitude ?? null}
-      />
+    <div className="mx-auto min-h-screen w-full max-w-5xl px-6 py-16 text-slate-100">
+      <div className="grid gap-10 xl:grid-cols-[3fr_2fr]">
+        <BookingForm
+          defaultLatitude={clientProfile?.latitude ?? null}
+          defaultLongitude={clientProfile?.longitude ?? null}
+        />
+        <QuoteBuilder />
+      </div>
     </div>
   );
 }
