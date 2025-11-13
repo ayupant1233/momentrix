@@ -8,16 +8,21 @@ const messageSchema = z.object({
   body: z.string().min(1).max(2000),
 });
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> },
+) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  const { id } = await context.params;
+
   const booking = await prisma.booking.findFirst({
     where: {
-      id: params.id,
+      id,
       OR: [
         { clientId: session.user.id },
         { photographerId: session.user.id },
