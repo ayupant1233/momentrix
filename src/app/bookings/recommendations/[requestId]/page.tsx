@@ -26,15 +26,16 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 }
 
-export default async function RecommendationsPage({ params }: { params: { requestId: string } }) {
+export default async function RecommendationsPage({ params }: { params: Promise<{ requestId: string }> }) {
+  const { requestId } = await params;
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id || session.user.role !== "CLIENT") {
-    redirect(`/login?callbackUrl=/bookings/recommendations/${params.requestId}`);
+    redirect(`/login?callbackUrl=/bookings/recommendations/${requestId}`);
   }
 
   const bookingRequest = await prisma.bookingRequest.findUnique({
-    where: { id: params.requestId },
+    where: { id: requestId },
   });
 
   if (!bookingRequest || bookingRequest.clientId !== session.user.id) {
@@ -83,9 +84,11 @@ export default async function RecommendationsPage({ params }: { params: { reques
     .filter((profile) => profile.latitude != null && profile.longitude != null)
     .map((profile) => {
       const distance = haversineDistance(requestLat, requestLon, profile.latitude!, profile.longitude!);
+      // Ensure distance is a valid number and not too large
+      const validDistance = isFinite(distance) && distance >= 0 ? Math.min(distance, 50000) : 50000;
       return {
-        id: profile.userId,
-        profileId: profile.id,
+        id: profile.userId, // userId for booking creation
+        profileId: profile.id, // profileId for profile links
         name: profile.user?.name ?? "Untitled Photographer",
         headline: profile.headline ?? "Add a headline",
         city: profile.city ?? "City TBD",
@@ -97,7 +100,7 @@ export default async function RecommendationsPage({ params }: { params: { reques
         reviews: profile.reviews.length,
         phone: profile.user?.phone ?? null,
         email: profile.user?.email ?? null,
-        distance,
+        distance: validDistance,
         travelRadiusKm: profile.travelRadiusKm ?? 0,
         followed: followedIds.has(profile.id),
       };

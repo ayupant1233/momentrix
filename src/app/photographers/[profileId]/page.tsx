@@ -7,11 +7,11 @@ import { format } from "date-fns";
 import clsx from "clsx";
 
 type PageProps = {
-  params: { profileId?: string };
+  params: Promise<{ profileId?: string }>;
 };
 
 export default async function PhotographerProfilePage({ params }: PageProps) {
-  const profileId = params.profileId;
+  const { profileId } = await params;
 
   if (!profileId) {
     notFound();

@@ -20,13 +20,13 @@ export default async function NewBookingPage() {
   return (
     <>
       <DashboardNav />
-      <div className="mx-auto min-h-screen w-full max-w-5xl px-6 py-14 text-slate-100">
-        <div className="grid gap-10 xl:grid-cols-[3fr_2fr]">
-        <BookingForm
-          defaultLatitude={clientProfile?.latitude ?? null}
-          defaultLongitude={clientProfile?.longitude ?? null}
-        />
-        <QuoteBuilder />
+      <div className="mx-auto min-h-screen w-full max-w-7xl px-4 py-10 text-slate-100 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-[2fr_1fr] xl:gap-10">
+          <BookingForm
+            defaultLatitude={clientProfile?.latitude ?? null}
+            defaultLongitude={clientProfile?.longitude ?? null}
+          />
+          <QuoteBuilder />
         </div>
       </div>
     </>

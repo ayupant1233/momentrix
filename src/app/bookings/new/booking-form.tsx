@@ -197,17 +197,17 @@ export default function BookingForm({
   const summary = buildSummary(watchedValues);
 
   return (
-    <div className="space-y-8 rounded-4xl border border-white/10 bg-white/5 p-8">
+    <div className="space-y-6 rounded-4xl border border-white/10 bg-white/5 p-6 sm:p-8">
       <header className="space-y-4">
         <p className="chip w-fit">Booking brief</p>
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold text-white">Create a project request</h1>
-            <p className="text-sm text-slate-300">
+            <h1 className="text-2xl font-semibold text-white sm:text-3xl">Create a project request</h1>
+            <p className="mt-1 text-sm text-slate-300">
               A thoughtful brief helps us shortlist photographers who already align with your story.
             </p>
           </div>
-          <div className="w-full max-w-xs">
+          <div className="w-full max-w-xs sm:w-auto">
             <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-500">
               <span>Progress</span>
               <span>{progressPercent}%</span>
@@ -219,8 +219,7 @@ export default function BookingForm({
         </div>
       </header>
 
-      <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <form onSubmit={onSubmit} className="space-y-8">
+      <form onSubmit={onSubmit} className="space-y-6">
           <div className="rounded-4xl border border-white/10 bg-white/5 p-6">
             <div className="space-y-2">
               <p className="text-xs uppercase tracking-[0.3em] text-brand-200">Step {step + 1} of {totalSteps}</p>
@@ -288,7 +287,7 @@ export default function BookingForm({
                     <Field label="Expected guests/attendees" error={errors.attendeeCount?.message}>
                       <input type="number" min={0} className="input" placeholder="e.g. 200" {...register("attendeeCount")} />
                     </Field>
-                    <div className="flex items-center gap-4">
+                    <div className="grid gap-4 sm:grid-cols-2">
                       <Field label="Budget min (₹)" error={errors.budgetMin?.message}>
                         <input type="number" min={0} className="input" placeholder="₹" {...register("budgetMin")} />
                       </Field>
@@ -368,12 +367,6 @@ export default function BookingForm({
             )}
           </div>
         </form>
-
-        <aside className="space-y-4 rounded-4xl border border-white/10 bg-white/5 p-6 text-sm text-slate-300">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-200">Live summary</h3>
-          <ReviewCard summary={summary} compact />
-        </aside>
-      </div>
     </div>
   );
 }
