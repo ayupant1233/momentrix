@@ -22,6 +22,16 @@ export const metadata: Metadata = {
   description:
     "Discover verified photographers, explore immersive portfolios, and book creatives near you on Momentrix.",
   metadataBase: new URL("https://momentrix.vercel.app"),
+  icons: {
+    icon: [
+      { url: "/momentrix-logo.png", sizes: "any" },
+      { url: "/momentrix-logo.png", type: "image/png" },
+    ],
+    apple: [
+      { url: "/momentrix-logo.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/momentrix-logo.png",
+  },
   openGraph: {
     title: "Momentrix",
     description:

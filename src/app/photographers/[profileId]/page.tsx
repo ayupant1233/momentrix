@@ -5,6 +5,7 @@ import DashboardNav from "@/components/dashboard-nav";
 import { BackLink } from "@/components/back-link";
 import { format } from "date-fns";
 import clsx from "clsx";
+import { ShareButtons } from "./share-buttons";
 
 type PageProps = {
   params: Promise<{ profileId?: string }>;
@@ -238,30 +239,7 @@ export default async function PhotographerProfilePage({ params }: PageProps) {
               <p className="mt-2 text-sm text-slate-200">
                 Send the profile to teammates or clients so everyone can align on the shortlists.
               </p>
-              <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={async () => {
-                    try {
-                      await navigator.clipboard.writeText(window.location.href);
-                      alert("Profile link copied to clipboard.");
-                    } catch {
-                      alert("Copy failed. Use your browser menu instead.");
-                    }
-                  }}
-                  className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-white transition hover:border-brand-300/60 hover:text-brand-100"
-                >
-                  Copy link
-                </button>
-                <a
-                  href={`mailto:?subject=Check%20out%20${encodeURIComponent(profile.user?.name ?? "this photographer")}&body=${encodeURIComponent(
-                    window.location.href,
-                  )}`}
-                  className="rounded-full border border-white/15 px-4 py-2 text-xs font-semibold text-white transition hover:border-brand-300/60 hover:text-brand-100"
-                >
-                  Email
-                </a>
-              </div>
+              <ShareButtons photographerName={profile.user?.name ?? null} />
             </div>
 
             <div className="rounded-4xl border border-white/10 bg-white/5 p-6">
