@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { format } from "date-fns";
+import DashboardNav from "@/components/dashboard-nav";
 
 export default async function BookingsPage() {
   const session = await getServerSession(authOptions);
@@ -32,7 +33,9 @@ export default async function BookingsPage() {
   const isClient = session.user.role === "CLIENT";
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-6xl px-6 py-16 text-slate-100">
+    <>
+      <DashboardNav />
+      <div className="mx-auto min-h-screen w-full max-w-6xl px-6 py-14 text-slate-100">
       <header className="mb-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="chip">{isClient ? "Your shoot requests" : "Incoming bookings"}</p>
@@ -53,7 +56,7 @@ export default async function BookingsPage() {
         ) : null}
       </header>
 
-      <main className="grid gap-5">
+        <main className="grid gap-5">
         {bookings.length === 0 ? (
           <div className="rounded-4xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-sm text-slate-300">
             {isClient
@@ -134,8 +137,9 @@ export default async function BookingsPage() {
             );
           })
         )}
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
 

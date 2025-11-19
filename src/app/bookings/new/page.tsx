@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import DashboardNav from "@/components/dashboard-nav";
 import BookingForm from "./booking-form";
 import QuoteBuilder from "./quote-builder";
 
@@ -17,15 +18,18 @@ export default async function NewBookingPage() {
   });
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-5xl px-6 py-16 text-slate-100">
-      <div className="grid gap-10 xl:grid-cols-[3fr_2fr]">
+    <>
+      <DashboardNav />
+      <div className="mx-auto min-h-screen w-full max-w-5xl px-6 py-14 text-slate-100">
+        <div className="grid gap-10 xl:grid-cols-[3fr_2fr]">
         <BookingForm
           defaultLatitude={clientProfile?.latitude ?? null}
           defaultLongitude={clientProfile?.longitude ?? null}
         />
         <QuoteBuilder />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

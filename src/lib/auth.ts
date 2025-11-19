@@ -67,11 +67,21 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.emailVerified = Boolean(user.emailVerified);
       } else if (token.id) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { emailVerifiedAt: true },
-        });
-        token.emailVerified = Boolean(dbUser?.emailVerifiedAt);
+        // Refresh role and emailVerified from database on each request
+        // Wrap in try-catch to prevent session errors if DB query fails
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { role: true, emailVerifiedAt: true },
+          });
+          if (dbUser) {
+            token.role = dbUser.role;
+            token.emailVerified = Boolean(dbUser.emailVerifiedAt);
+          }
+        } catch (error) {
+          // If database query fails, keep existing token values
+          console.error("[NextAuth JWT] Failed to refresh user data:", error);
+        }
       }
       return token;
     },

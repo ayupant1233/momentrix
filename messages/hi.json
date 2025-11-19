@@ -1,0 +1,99 @@
+{
+  "common": {
+    "appName": "मोमेंट्रिक्स",
+    "loading": "लोड हो रहा है...",
+    "error": "एक त्रुटि हुई",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "back": "वापस",
+    "next": "अगला",
+    "previous": "पिछला",
+    "submit": "जमा करें",
+    "search": "खोजें",
+    "filter": "फ़िल्टर",
+    "sort": "क्रमबद्ध करें",
+    "close": "बंद करें"
+  },
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "discover": "खोजें",
+    "shortlist": "शॉर्टलिस्ट",
+    "bookings": "बुकिंग",
+    "messages": "संदेश",
+    "portfolio": "पोर्टफोलियो",
+    "posts": "पोस्ट",
+    "availability": "उपलब्धता",
+    "verification": "सत्यापन",
+    "settings": "सेटिंग्स",
+    "logout": "लॉग आउट"
+  },
+  "auth": {
+    "login": "लॉगिन",
+    "register": "पंजीकरण",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "name": "नाम",
+    "phone": "फोन",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "createAccount": "खाता बनाएं",
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "dontHaveAccount": "खाता नहीं है?"
+  },
+  "dashboard": {
+    "title": "डैशबोर्ड",
+    "welcome": "वापसी पर स्वागत है",
+    "quickActions": "त्वरित कार्य",
+    "recentActivity": "हाल की गतिविधि",
+    "upcomingBookings": "आगामी बुकिंग",
+    "pendingRequests": "लंबित अनुरोध"
+  },
+  "discover": {
+    "title": "फोटोग्राफर खोजें",
+    "subtitle": "अपने आसपास फोटोग्राफर खोजें",
+    "filters": "फ़िल्टर",
+    "sortBy": "क्रमबद्ध करें",
+    "distance": "दूरी",
+    "price": "मूल्य",
+    "rating": "रेटिंग",
+    "verification": "सत्यापन स्थिति"
+  },
+  "bookings": {
+    "title": "बुकिंग",
+    "newBooking": "नई बुकिंग",
+    "createBrief": "ब्रीफ बनाएं",
+    "status": "स्थिति",
+    "eventName": "इवेंट का नाम",
+    "eventType": "इवेंट प्रकार",
+    "location": "स्थान",
+    "date": "तारीख",
+    "time": "समय"
+  },
+  "messages": {
+    "title": "संदेश",
+    "conversations": "आपकी बातचीत",
+    "noMessages": "अभी तक कोई बातचीत नहीं",
+    "unread": "अपठित",
+    "all": "सभी",
+    "bookings": "बुकिंग",
+    "searchPlaceholder": "बातचीत खोजें...",
+    "noMessagesDescription": "बुकिंग शुरू करने के बाद यहां संदेश दिखाई देंगे।"
+  },
+  "shortlist": {
+    "title": "शॉर्टलिस्ट",
+    "subtitle": "सहेजे गए फोटोग्राफरों की समीक्षा करें",
+    "compare": "तुलना करें",
+    "remove": "हटाएं",
+    "viewProfile": "प्रोफ़ाइल देखें"
+  },
+  "verification": {
+    "title": "सत्यापन",
+    "emailVerification": "ईमेल सत्यापन",
+    "socialVerification": "सोशल मीडिया सत्यापन",
+    "verified": "सत्यापित",
+    "pending": "लंबित",
+    "notVerified": "सत्यापित नहीं"
+  }
+}
+

@@ -3,6 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
+import DashboardNav from "@/components/dashboard-nav";
+import { BackLink } from "@/components/back-link";
 import RecommendationsClient from "./recommendations-client";
 
 export const metadata: Metadata = {
@@ -106,16 +108,22 @@ export default async function RecommendationsPage({ params }: { params: { reques
   const fallback = enriched.slice(0, 12);
 
   return (
-    <RecommendationsClient
-      bookingRequest={bookingRequestPayload}
-      nearby={(nearby.length ? nearby : fallback).map((item) => ({
-        ...item,
-        distance: Number(item.distance),
-      }))}
-      allResults={enriched.map((item) => ({
-        ...item,
-        distance: Number(item.distance),
-      }))}
-    />
+    <>
+      <DashboardNav />
+      <div className="mx-auto min-h-screen w-full max-w-6xl px-6 py-14 text-slate-100">
+        <BackLink href="/bookings" label="Back to bookings" className="mb-6" />
+        <RecommendationsClient
+          bookingRequest={bookingRequestPayload}
+          nearby={(nearby.length ? nearby : fallback).map((item) => ({
+            ...item,
+            distance: Number(item.distance),
+          }))}
+          allResults={enriched.map((item) => ({
+            ...item,
+            distance: Number(item.distance),
+          }))}
+        />
+      </div>
+    </>
   );
 }

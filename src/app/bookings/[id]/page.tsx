@@ -4,7 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { format } from "date-fns";
 import clsx from "clsx";
+import DashboardNav from "@/components/dashboard-nav";
+import { BackLink } from "@/components/back-link";
 import ChatComposer from "./chat-composer";
+import { MarkRead } from "./mark-read";
 
 type BookingPageProps = {
   params: {
@@ -52,7 +55,11 @@ export default async function BookingDetailPage({ params }: BookingPageProps) {
   const isClient = booking.clientId === currentUserId;
 
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-6 py-16 text-slate-100">
+    <>
+      <DashboardNav />
+      <MarkRead threadId={booking.thread?.id ?? null} />
+      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-6 py-14 text-slate-100">
+        <BackLink href="/bookings" label="Back to bookings" />
       <header className="rounded-4xl border border-white/10 bg-white/5 p-6">
         <p className="chip w-fit">Booking reference</p>
         <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -144,7 +151,8 @@ export default async function BookingDetailPage({ params }: BookingPageProps) {
           </div>
         </aside>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
 

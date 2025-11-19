@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import DashboardNav from "@/components/dashboard-nav";
 import { DiscoverClient } from "./discover-client";
 
 export default async function DiscoverPage() {
@@ -9,6 +10,10 @@ export default async function DiscoverPage() {
 
   if (!session?.user?.id) {
     redirect("/login?callbackUrl=/discover");
+  }
+
+  if (session.user.role !== "CLIENT") {
+    redirect("/app");
   }
 
   const profile = await prisma.clientProfile.findUnique({
@@ -52,7 +57,9 @@ export default async function DiscoverPage() {
   });
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-6xl px-6 py-16 text-slate-100">
+    <>
+      <DashboardNav />
+      <div className="mx-auto min-h-screen w-full max-w-6xl px-6 py-14 text-slate-100">
       <DiscoverClient
         defaultLatitude={profile?.latitude ?? null}
         defaultLongitude={profile?.longitude ?? null}
@@ -73,7 +80,8 @@ export default async function DiscoverPage() {
           hero: photographer.portfolioItems[0] ?? null,
         }))}
       />
-    </div>
+      </div>
+    </>
   );
 }
 

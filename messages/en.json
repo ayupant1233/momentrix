@@ -1,0 +1,99 @@
+{
+  "common": {
+    "appName": "Momentrix",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "close": "Close"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "discover": "Discover",
+    "shortlist": "Shortlist",
+    "bookings": "Bookings",
+    "messages": "Messages",
+    "portfolio": "Portfolio",
+    "posts": "Posts",
+    "availability": "Availability",
+    "verification": "Verification",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "phone": "Phone",
+    "forgotPassword": "Forgot password?",
+    "createAccount": "Create account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "quickActions": "Quick Actions",
+    "recentActivity": "Recent Activity",
+    "upcomingBookings": "Upcoming Bookings",
+    "pendingRequests": "Pending Requests"
+  },
+  "discover": {
+    "title": "Discover Photographers",
+    "subtitle": "Find photographers near you",
+    "filters": "Filters",
+    "sortBy": "Sort by",
+    "distance": "Distance",
+    "price": "Price",
+    "rating": "Rating",
+    "verification": "Verification Status"
+  },
+  "bookings": {
+    "title": "Bookings",
+    "newBooking": "New Booking",
+    "createBrief": "Create Brief",
+    "status": "Status",
+    "eventName": "Event Name",
+    "eventType": "Event Type",
+    "location": "Location",
+    "date": "Date",
+    "time": "Time"
+  },
+  "messages": {
+    "title": "Messages",
+    "conversations": "Your conversations",
+    "noMessages": "No conversations yet",
+    "unread": "Unread",
+    "all": "All",
+    "bookings": "Bookings",
+    "searchPlaceholder": "Search conversations...",
+    "noMessagesDescription": "Messages will appear here once you start a booking."
+  },
+  "shortlist": {
+    "title": "Shortlist",
+    "subtitle": "Review your saved photographers",
+    "compare": "Compare",
+    "remove": "Remove",
+    "viewProfile": "View Profile"
+  },
+  "verification": {
+    "title": "Verification",
+    "emailVerification": "Email Verification",
+    "socialVerification": "Social Media Verification",
+    "verified": "Verified",
+    "pending": "Pending",
+    "notVerified": "Not Verified"
+  }
+}
+

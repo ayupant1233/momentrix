@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
@@ -19,16 +21,41 @@ export async function GET(request: Request) {
   const longitude = Number(searchParams.get("longitude") ?? "0");
   const radius = Number(searchParams.get("radius") ?? "50");
   const text = (searchParams.get("q") ?? "").toLowerCase();
+  const minRate = searchParams.get("minRate");
+  const maxRate = searchParams.get("maxRate");
+  const verification = searchParams.get("verification");
+  const servicesFilter = (searchParams.get("services") ?? "")
+    .split(",")
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+  const sortBy = searchParams.get("sort") ?? "distance";
 
   if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
     return NextResponse.json({ message: "Invalid coordinates" }, { status: 400 });
+  }
+
+  const session = await getServerSession(authOptions);
+  const viewerId = session?.user?.id && session.user.role === "CLIENT" ? session.user.id : null;
+
+  let followedSet = new Set<string>();
+  if (viewerId) {
+    const followed = await prisma.photographerFollow.findMany({
+      where: { clientId: viewerId },
+      select: { photographerId: true },
+    });
+    followedSet = new Set(followed.map((item) => item.photographerId));
   }
 
   const profiles = await prisma.photographerProfile.findMany({
     where: {
       latitude: { not: null },
       longitude: { not: null },
-      verificationStatus: { not: "REJECTED" },
+      verificationStatus:
+        verification === "verified"
+          ? "APPROVED"
+          : verification === "pending"
+            ? { in: ["PENDING", "APPROVED"] }
+            : { not: "REJECTED" },
     },
     include: {
       user: {
@@ -38,6 +65,10 @@ export async function GET(request: Request) {
       portfolioItems: {
         take: 3,
         orderBy: { createdAt: "desc" },
+      },
+      availability: {
+        take: 1,
+        orderBy: { startTime: "asc" },
       },
     },
   });
@@ -53,9 +84,8 @@ export async function GET(request: Request) {
         !text ||
         profile.headline?.toLowerCase().includes(text) ||
         profile.bio?.toLowerCase().includes(text) ||
-        JSON.stringify(profile.tags ?? "")
-          .toLowerCase()
-          .includes(text);
+        JSON.stringify(profile.tags ?? "").toLowerCase().includes(text) ||
+        JSON.stringify(profile.services ?? "").toLowerCase().includes(text);
 
       if (!matchesSearch) {
         return null;
@@ -68,6 +98,28 @@ export async function GET(request: Request) {
       const tags = Array.isArray(profile.tags)
         ? profile.tags.map((tag) => String(tag))
         : null;
+
+      const minBudget = minRate ? Number(minRate) : undefined;
+      const maxBudget = maxRate ? Number(maxRate) : undefined;
+      const hourly = profile.hourlyRate ?? profile.fullDayRate ?? undefined;
+      const fullDay = profile.fullDayRate ?? profile.hourlyRate ?? undefined;
+
+      if (minBudget && hourly && hourly < minBudget && fullDay && fullDay < minBudget) {
+        return null;
+      }
+
+      if (maxBudget && hourly && hourly > maxBudget && fullDay && fullDay > maxBudget) {
+        return null;
+      }
+
+      if (
+        servicesFilter.length &&
+        !servicesFilter.every((service) =>
+          (services ?? []).some((item) => item.toLowerCase().includes(service)),
+        )
+      ) {
+        return null;
+      }
 
       return {
         id: profile.id,
@@ -93,13 +145,35 @@ export async function GET(request: Request) {
         })),
         email: profile.user?.email ?? "",
         phone: profile.user?.phone ?? "",
+        followed: followedSet.has(profile.id),
+        nextAvailability: profile.availability[0]?.startTime ?? null,
       };
     })
     .filter((item): item is NonNullable<typeof item> => Boolean(item))
-    .filter((item) => item.distance <= radius + item.travelRadiusKm)
-    .sort((a, b) => a.distance - b.distance)
-    .slice(0, 24);
+    .filter((item) => item.distance <= radius + item.travelRadiusKm);
 
-  return NextResponse.json({ results: enriched });
+  const sorted = [...enriched].sort((a, b) => {
+    switch (sortBy) {
+      case "price-asc": {
+        const priceA = a.hourlyRate ?? a.fullDayRate ?? Number.MAX_SAFE_INTEGER;
+        const priceB = b.hourlyRate ?? b.fullDayRate ?? Number.MAX_SAFE_INTEGER;
+        return priceA - priceB;
+      }
+      case "price-desc": {
+        const priceA = a.hourlyRate ?? a.fullDayRate ?? 0;
+        const priceB = b.hourlyRate ?? b.fullDayRate ?? 0;
+        return priceB - priceA;
+      }
+      case "rating":
+        return (b.averageRating ?? 0) - (a.averageRating ?? 0);
+      case "recent":
+        return (b.portfolioItems[0]?.id ?? "").localeCompare(a.portfolioItems[0]?.id ?? "");
+      case "distance":
+      default:
+        return a.distance - b.distance;
+    }
+  });
+
+  return NextResponse.json({ results: sorted.slice(0, 24) });
 }
 

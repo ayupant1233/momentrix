@@ -396,13 +396,13 @@ export default function Home() {
             </p>
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
-                href="#"
+                href="/register?role=PHOTOGRAPHER"
                 className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3 font-semibold text-midnight-900 shadow-soft-glow transition hover:bg-brand-100"
               >
                 Apply as photographer
               </Link>
               <Link
-                href="#"
+                href="/register?role=CLIENT"
                 className="inline-flex items-center justify-center rounded-full border border-white/20 px-7 py-3 font-semibold text-white transition hover:border-brand-400/60 hover:text-brand-100"
               >
                 Try client experience

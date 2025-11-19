@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useMemo, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 const registerSchema = z
@@ -28,8 +28,26 @@ const registerSchema = z
 type RegisterValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterContent />
+    </Suspense>
+  );
+}
+
+function RegisterContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [serverMessage, setServerMessage] = useState<string | null>(null);
+  
+  const defaultRole = useMemo(() => {
+    const roleParam = searchParams.get("role");
+    if (roleParam === "PHOTOGRAPHER" || roleParam === "CLIENT") {
+      return roleParam;
+    }
+    return "CLIENT";
+  }, [searchParams]);
+
   const {
     register,
     handleSubmit,
@@ -41,7 +59,7 @@ export default function RegisterPage() {
       email: "",
       password: "",
       confirmPassword: "",
-      role: "CLIENT",
+      role: defaultRole,
     },
   });
 
